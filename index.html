@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Happy Birthday Dina!</title>
+    <style>
+        /* AESTHETIC: Dark mode, cool, gamer vibes */
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap');
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            background-color: #1e1e24; /* Dark cool grey */
+            color: #ffffff;
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* HUGE HEADER */
+        .hero {
+            width: 100vw;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #111;
+            /* YOU WILL REPLACE THE IMAGE URL BELOW */
+            background-image: url('https://via.placeholder.com/1080x1920/111/fff?text=HUGE+HAPPY+BIRTHDAY+HEADER');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .scroll-down {
+            position: absolute;
+            bottom: 30px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: bounce 2s infinite;
+            color: #8b949e;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-15px); }
+            60% { transform: translateY(-7px); }
+        }
+
+        /* GAME SECTION */
+        .game-section {
+            padding: 60px 20px;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .game-section h2 {
+            font-size: 2rem;
+            margin-bottom: 40px;
+            color: #c9d1d9;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+        .presents-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .present {
+            background-color: #2b2d31; /* Discord dark theme color */
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border: 1px solid #383a40;
+            z-index: 10;
+        }
+
+        .present img {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+        }
+
+        .present p {
+            margin: 0;
+            font-size: 14px;
+            font-weight: bold;
+            color: #f0f6fc;
+        }
+
+        /* OFFICIAL WISH SECTION */
+        .reveal-section {
+            display: none; /* Hidden until clicked */
+            padding: 40px 20px;
+            text-align: center;
+            min-height: 100vh;
+            background-color: #1e1e24;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .reveal-section.visible {
+            display: flex;
+            opacity: 1;
+        }
+
+        .wise-choice {
+            font-size: 2.5rem;
+            color: #5865F2; /* Discord blurple accent */
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .message-box {
+            background: #2b2d31;
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 5px solid #5865F2;
+            max-width: 500px;
+            line-height: 1.6;
+            font-size: 1.1rem;
+            text-align: left;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="hero">
+        <div class="scroll-down">Scroll Down ↓</div>
+    </header>
+
+    <section class="game-section" id="game-section">
+        <h2>Choose ur present 🎁</h2>
+        <div class="presents-grid">
+            
+            <div class="present runaway">
+                <img src="https://via.placeholder.com/300/e6e6e6/333?text=Mexico+66" alt="Onitsuka Mexico 66">
+                <p>Onitsuka Mexico 66</p>
+            </div>
+
+            <div class="present runaway">
+                <img src="https://via.placeholder.com/300/e6e6e6/333?text=Adidas+Samba" alt="Adidas Samba">
+                <p>Adidas Samba</p>
+            </div>
+
+            <div class="present runaway">
+                <img src="https://via.placeholder.com/300/e6e6e6/333?text=Cool+Shirt" alt="A Shirt">
+                <p>Cool Shirt</p>
+            </div>
+
+            <div class="present" id="choose-me">
+                <img src="https://via.placeholder.com/300/5865F2/fff?text=Me" alt="Me">
+                <p>Me</p>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="reveal-section" id="reveal-section">
+        <h1 class="wise-choice">Wise Choice.</h1>
+        <div class="message-box">
+            <p>Hey Dina,</p>
+            <p>Happy Birthday! Put your actual heartfelt, funny, or deep message right here. Remind her of when you guys met on Discord back in 2023, the games you played, and the hanging out. Tell her she's a homie and you got her back through whatever she's going through.</p>
+            <p>Stay cool,<br>- Your Name</p>
+        </div>
+    </section>
+
+    <script>
+        const runawayItems = document.querySelectorAll('.runaway');
+        const chooseMeBtn = document.getElementById('choose-me');
+        const gameSection = document.getElementById('game-section');
+        const revealSection = document.getElementById('reveal-section');
+
+        // Function to make items run away
+        function dodge(e) {
+            e.preventDefault(); // Prevents touch from scrolling screen while dodging
+            const item = e.currentTarget;
+            
+            // Generate random X and Y coordinates within the screen
+            const maxX = window.innerWidth - item.offsetWidth - 20;
+            const maxY = window.innerHeight - item.offsetHeight - 20;
+            
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY);
+
+            // Change to fixed position so it flies around the screen
+            item.style.position = 'fixed';
+            item.style.left = randomX + 'px';
+            item.style.top = randomY + 'px';
+            item.style.zIndex = '9999';
+        }
+
+        // Add dodge listeners to the fake presents for both mobile (touchstart) and desktop (mouseover)
+        runawayItems.forEach(item => {
+            item.addEventListener('mouseover', dodge);
+            item.addEventListener('touchstart', dodge, {passive: false});
+        });
+
+        // The logic for when she clicks YOU
+        chooseMeBtn.addEventListener('click', () => {
+            // Hide the game smoothly
+            gameSection.style.transition = "opacity 0.5s ease";
+            gameSection.style.opacity = "0";
+            
+            setTimeout(() => {
+                gameSection.style.display = "none";
+                
+                // Show the official message
+                revealSection.classList.add('visible');
+                
+                // Scroll down to the message smoothly
+                revealSection.scrollIntoView({ behavior: 'smooth' });
+            }, 500);
+        });
+    </script>
+</body>
+</html>
