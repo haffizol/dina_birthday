@@ -87,9 +87,21 @@
 
         .game-section h2 {
             font-size: 2rem;
-            margin-bottom: 40px;
+            margin-bottom: 10px;
             color: #c9d1d9;
             text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.8);
+        }
+
+        /* TAUNT TEXT */
+        .taunt-container {
+            height: 30px;
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+            color: #ff4a4a;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+            text-shadow: 0px 0px 10px rgba(255, 74, 74, 0.6);
         }
 
         .presents-grid {
@@ -100,23 +112,26 @@
             max-width: 400px;
         }
 
+        /* TRANSPARENT PNG FIX */
         .present {
-            background-color: #2b2d31;
-            border-radius: 12px;
-            padding: 15px;
+            background-color: transparent; /* Removed background box */
+            padding: 10px;
             text-align: center;
             cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            border: 2px solid transparent;
+            transition: transform 0.2s ease;
         }
 
         .present img {
             width: 100%;
-            border-radius: 8px;
             margin-bottom: 10px;
             aspect-ratio: 1/1;
-            object-fit: cover;
+            object-fit: contain; /* Keeps the whole image visible without cropping */
+            filter: drop-shadow(0px 8px 10px rgba(0,0,0,0.6)); /* Wraps shadow around PNG shape */
+            transition: transform 0.2s ease;
+        }
+
+        .present:hover img {
+            transform: scale(1.05);
         }
 
         .present p {
@@ -124,13 +139,13 @@
             font-size: 14px;
             font-weight: bold;
             color: #f0f6fc;
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.8);
         }
 
         /* ERROR SHAKE ANIMATION */
-        .error-shake {
+        .error-shake img {
             animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
-            border-color: #ff4a4a !important;
-            box-shadow: 0 0 20px rgba(255, 74, 74, 0.6) !important;
+            filter: drop-shadow(0px 0px 15px rgba(255, 74, 74, 0.8)) !important;
         }
 
         @keyframes shake {
@@ -167,13 +182,11 @@
             text-shadow: 0 0 15px rgba(88, 101, 242, 0.5);
         }
 
-        /* PLAIN TEXT WRITING AREA */
         .typing-container {
             max-width: 500px;
             text-align: left;
             font-size: 1.2rem;
             line-height: 1.8;
-            /* Subtle dark backdrop so text is easy to read against chaotic background */
             background: rgba(0, 0, 0, 0.6);
             padding: 20px;
             border-radius: 10px;
@@ -185,7 +198,6 @@
             color: #e6e6e6;
         }
 
-        /* Blinking cursor */
         .cursor {
             display: inline-block;
             width: 10px;
@@ -209,6 +221,9 @@
 
     <section class="game-section" id="game-section">
         <h2>Choose ur present 🎁</h2>
+        
+        <div class="taunt-container" id="taunt-box">Nope. Try again.</div>
+
         <div class="presents-grid">
             
             <div class="present wrong-choice">
@@ -242,28 +257,52 @@
     </section>
 
     <script>
+        // --- SETUP ---
         const wrongItems = document.querySelectorAll('.wrong-choice');
         const chooseMeBtn = document.getElementById('choose-me');
-        const gameSection = document.getElementById('game-section');
         const revealSection = document.getElementById('reveal-section');
         const typeWriterElement = document.getElementById('typewriter-text');
+        const tauntBox = document.getElementById('taunt-box');
 
-        // PUT YOUR ACTUAL MESSAGE HERE
-        // Use \n\n to create new paragraphs.
+        // TRACKER
+        let clickFails = 0;
+
+        // THE TAUNTS
+        const taunts = [
+            "Bruh, really?",
+            "L choice.",
+            "Are you blind?",
+            "Wrong.",
+            "Try again, weirdo.",
+            "Not that one!",
+            "Did you even look at the options?"
+        ];
+
+        // YOUR MESSAGE
         const officialMessage = "Hey Dina,\n\nHappy Birthday! I'm glad we crossed paths on Discord back in '23. From the games to just hanging out, you've always been a real one.\n\nI know you're going through a lot right now, but just remember you're a homie and I've got your back. Keep being the cool, weird girl you are.\n\nStay cool,\n- [Your Name]";
 
-        // Wrong choice logic (Red border + Shake + Vibrate)
+        // --- GAME LOGIC ---
+
+        // Wrong choice logic 
         wrongItems.forEach(item => {
             item.addEventListener('click', function() {
+                // Add to counter
+                clickFails++;
+
                 // Try to vibrate phone for 200ms
                 if (navigator.vibrate) {
                     navigator.vibrate(200);
                 }
                 
+                // Show a random taunt
+                const randomTaunt = taunts[Math.floor(Math.random() * taunts.length)];
+                tauntBox.innerText = randomTaunt;
+                tauntBox.style.opacity = 1;
+
                 // Add the red shake animation
                 this.classList.add('error-shake');
                 
-                // Remove the animation class after it finishes so it can trigger again
+                // Remove the animation class after it finishes
                 setTimeout(() => {
                     this.classList.remove('error-shake');
                 }, 400);
@@ -274,46 +313,57 @@
         let i = 0;
         function typeWriter() {
             if (i < officialMessage.length) {
-                // If the character is a newline, add a <br> tag instead of \n
                 if (officialMessage.charAt(i) === '\n') {
                     typeWriterElement.innerHTML += '<br>';
                 } else {
                     typeWriterElement.innerHTML += officialMessage.charAt(i);
                 }
                 i++;
-                setTimeout(typeWriter, 40); // 40ms per letter. Adjust for speed.
+                setTimeout(typeWriter, 40); 
             }
         }
 
         // The logic for when she clicks YOU
+        // { once: true } ensures she can only trigger this once (avoids email spam)
         chooseMeBtn.addEventListener('click', () => {
             
-            // Fire Confetti!
+            // 1. FIRE THE EMAIL TO YOU SILENTLY IN THE BACKGROUND
+            // Make sure to replace YOUR_ACCESS_KEY_HERE
+            fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    access_key: 'b9f4bea3-2010-40eb-9134-c8ba0cacc56b', 
+                    subject: 'Dina clicked the right present!',
+                    message: `Dina finally clicked you! It took her ${clickFails} wrong clicks before choosing the Gigachad.`
+                })
+            });
+
+            // 2. FIRE CONFETTI
             confetti({
                 particleCount: 150,
                 spread: 80,
                 origin: { y: 0.6 },
-                colors: ['#5865F2', '#ffffff', '#8b949e'] // Discord blurple + white + grey
+                colors: ['#5865F2', '#ffffff', '#8b949e']
             });
 
-            // Hide the game smoothly
-            gameSection.style.transition = "opacity 0.5s ease";
-            gameSection.style.opacity = "0";
+            // 3. HIDE TAUNTS, KEEP PRESENTS VISIBLE
+            tauntBox.style.opacity = 0;
             
+            // 4. SHOW THE MESSAGE BELOW IT
+            revealSection.classList.add('visible');
+            
+            // 5. SCROLL DOWN AND TYPE
             setTimeout(() => {
-                gameSection.style.display = "none";
-                
-                // Show the official message
-                revealSection.classList.add('visible');
-                
-                // Scroll down to the message smoothly
                 revealSection.scrollIntoView({ behavior: 'smooth' });
-
                 // Wait half a second, then start typing the message
                 setTimeout(typeWriter, 500);
+            }, 200);
 
-            }, 500);
-        });
+        }, { once: true }); 
     </script>
 </body>
 </html>
