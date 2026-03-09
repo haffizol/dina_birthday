@@ -6,8 +6,8 @@
     <title>Happy Birthday Dina!</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        /* AESTHETIC: Dark mode, cool, gamer vibes */
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap');
+        /* AESTHETIC: Dark mode, gamer vibes, plus emotional handwriting font */
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Space+Grotesk:wght@400;700&display=swap');
 
         body, html {
             margin: 0;
@@ -87,16 +87,29 @@
 
         .game-section h2 {
             font-size: 2rem;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             color: #c9d1d9;
             text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.8);
+        }
+
+        .volume-warning {
+            color: #5865F2;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            animation: pulseText 1.5s infinite;
+            font-weight: bold;
+        }
+
+        @keyframes pulseText {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
         /* TAUNT TEXT */
         .taunt-container {
             height: 30px;
-            margin-bottom: 30px;
-            font-size: 1.2rem;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
             color: #ff4a4a;
             font-weight: bold;
             opacity: 0;
@@ -112,9 +125,8 @@
             max-width: 400px;
         }
 
-        /* TRANSPARENT PNG FIX */
         .present {
-            background-color: transparent; /* Removed background box */
+            background-color: transparent;
             padding: 10px;
             text-align: center;
             cursor: pointer;
@@ -125,8 +137,8 @@
             width: 100%;
             margin-bottom: 10px;
             aspect-ratio: 1/1;
-            object-fit: contain; /* Keeps the whole image visible without cropping */
-            filter: drop-shadow(0px 8px 10px rgba(0,0,0,0.6)); /* Wraps shadow around PNG shape */
+            object-fit: contain;
+            filter: drop-shadow(0px 8px 10px rgba(0,0,0,0.6));
             transition: transform 0.2s ease;
         }
 
@@ -185,27 +197,31 @@
         .typing-container {
             max-width: 500px;
             text-align: left;
-            font-size: 1.2rem;
-            line-height: 1.8;
             background: rgba(0, 0, 0, 0.6);
-            padding: 20px;
-            border-radius: 10px;
+            padding: 30px;
+            border-radius: 15px;
             backdrop-filter: blur(5px);
             min-height: 200px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-left: 4px solid #5865F2;
         }
 
+        /* EMOTIONAL FONT SETTINGS */
         #typewriter-text {
             color: #e6e6e6;
+            font-family: 'Caveat', cursive; /* Handwritten emotional font */
+            font-size: 1.8rem; /* Made bigger because handwritten fonts read smaller */
+            line-height: 1.4;
         }
 
         .cursor {
             display: inline-block;
-            width: 10px;
-            height: 1.2rem;
+            width: 8px;
+            height: 1.5rem;
             background-color: #5865F2;
             animation: blink 1s step-end infinite;
-            vertical-align: middle;
-            margin-left: 2px;
+            vertical-align: text-bottom;
+            margin-left: 5px;
         }
 
         @keyframes blink {
@@ -215,28 +231,31 @@
 </head>
 <body>
 
+    <audio id="bday-song" src="https://github.com/haffizol/dina_birthday/blob/main/Coldplay%20-%20Sparks%20-%20Instrumental%20(NO%20VOICE!).mp3?raw=true"></audio>
+
     <header class="hero">
         <div class="scroll-down">Scroll Down ↓</div>
     </header>
 
     <section class="game-section" id="game-section">
         <h2>Choose ur present 🎁</h2>
+        <div class="volume-warning">🔊 P.S. Turn up your volume</div>
         
         <div class="taunt-container" id="taunt-box">Nope. Try again.</div>
 
         <div class="presents-grid">
             
-            <div class="present wrong-choice">
+            <div class="present wrong-choice" data-name="Onitsuka">
                 <img src="https://github.com/haffizol/dina_birthday/blob/main/onitsuka.png?raw=true" alt="Onitsuka Mexico 66">
                 <p>Onitsuka Mexico 66</p>
             </div>
 
-            <div class="present wrong-choice">
+            <div class="present wrong-choice" data-name="Samba">
                 <img src="https://github.com/haffizol/dina_birthday/blob/main/samba.png?raw=true" alt="Adidas Samba">
                 <p>Adidas Samba</p>
             </div>
 
-            <div class="present wrong-choice">
+            <div class="present wrong-choice" data-name="Jersey">
                 <img src="https://github.com/haffizol/dina_birthday/blob/main/mu%20jersey.png?raw=true" alt="A Shirt">
                 <p>"Cool" Jersey</p>
             </div>
@@ -263,19 +282,26 @@
         const revealSection = document.getElementById('reveal-section');
         const typeWriterElement = document.getElementById('typewriter-text');
         const tauntBox = document.getElementById('taunt-box');
+        const bgMusic = document.getElementById('bday-song');
 
-        // TRACKER
-        let clickFails = 0;
+        // SPECIFIC ITEM TRACKER
+        let clickStats = {
+            Onitsuka: 0,
+            Samba: 0,
+            Jersey: 0
+        };
 
-        // THE TAUNTS
+        // THE TAUNTS (Upgraded with emojis and extra disrespect)
         const taunts = [
-            "Bruh, really?",
-            "L choice.",
-            "Are you blind?",
-            "Wrong.",
-            "Try again, weirdo.",
-            "Not that one!",
-            "Did you even look at the options?"
+            "Bruh, really? 💀",
+            "L choice 🤡",
+            "Are you blind? 👓",
+            "Bro, be so fr right now 🤦‍♀️",
+            "Not that one! 🚫",
+            "Did you even look at the options? 🤨",
+            "Skill issue. 🎮",
+            "Emotional damage 📉",
+            "Wrong. Do better. 🚮"
         ];
 
         // YOUR MESSAGE
@@ -286,8 +312,9 @@
         // Wrong choice logic 
         wrongItems.forEach(item => {
             item.addEventListener('click', function() {
-                // Add to counter
-                clickFails++;
+                // Add to specific counter based on the data-name attribute
+                const itemName = this.getAttribute('data-name');
+                clickStats[itemName]++;
 
                 // Try to vibrate phone for 200ms
                 if (navigator.vibrate) {
@@ -309,7 +336,7 @@
             });
         });
 
-        // Typewriter function
+        // Typewriter function (SPED UP)
         let i = 0;
         function typeWriter() {
             if (i < officialMessage.length) {
@@ -319,15 +346,18 @@
                     typeWriterElement.innerHTML += officialMessage.charAt(i);
                 }
                 i++;
-                setTimeout(typeWriter, 40); 
+                setTimeout(typeWriter, 15); // Changed from 40 to 15 for faster writing
             }
         }
 
         // The logic for when she clicks YOU
-        // { once: true } ensures she can only trigger this once (avoids email spam)
         chooseMeBtn.addEventListener('click', () => {
             
-            // 1. FIRE THE EMAIL TO YOU SILENTLY IN THE BACKGROUND
+            // 1. PLAY THE SONG!
+            // Browsers allow audio to play automatically only AFTER the user clicks something on the page.
+            bgMusic.play();
+
+            // 2. FIRE THE EMAIL TO YOU WITH SPECIFIC STATS
             // Make sure to replace YOUR_ACCESS_KEY_HERE
             fetch('https://api.web3forms.com/submit', {
                 method: 'POST',
@@ -338,11 +368,11 @@
                 body: JSON.stringify({
                     access_key: 'b9f4bea3-2010-40eb-9134-c8ba0cacc56b', 
                     subject: 'Dina clicked the right present!',
-                    message: `Dina finally clicked you! It took her ${clickFails} wrong clicks before choosing the Gigachad.`
+                    message: `Dina finally clicked you! Here is the breakdown of her terrible choices:\n\n- Onitsuka: ${clickStats.Onitsuka} clicks\n- Samba: ${clickStats.Samba} clicks\n- Jersey: ${clickStats.Jersey} clicks\n\nTotal wrong clicks: ${clickStats.Onitsuka + clickStats.Samba + clickStats.Jersey}`
                 })
             });
 
-            // 2. FIRE CONFETTI
+            // 3. FIRE CONFETTI
             confetti({
                 particleCount: 150,
                 spread: 80,
@@ -350,13 +380,13 @@
                 colors: ['#5865F2', '#ffffff', '#8b949e']
             });
 
-            // 3. HIDE TAUNTS, KEEP PRESENTS VISIBLE
+            // 4. HIDE TAUNTS, KEEP PRESENTS VISIBLE
             tauntBox.style.opacity = 0;
             
-            // 4. SHOW THE MESSAGE BELOW IT
+            // 5. SHOW THE MESSAGE BELOW IT
             revealSection.classList.add('visible');
             
-            // 5. SCROLL DOWN AND TYPE
+            // 6. SCROLL DOWN AND TYPE
             setTimeout(() => {
                 revealSection.scrollIntoView({ behavior: 'smooth' });
                 // Wait half a second, then start typing the message
